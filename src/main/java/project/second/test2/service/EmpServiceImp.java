@@ -26,12 +26,24 @@ public class EmpServiceImp implements EmpService{
     }
 
     @Override
+    public Employee readEmployee(Long id) {
+        // TODO Auto-generated method stub
+         Employee emp=new Employee();
+        EmployeeEntity existEmp= employeeRepository.findById(id).get();
+        BeanUtils.copyProperties(existEmp,emp);
+        return emp;
+    }
+
+
+    @Override
     public List<Employee> readEmployees() {
         List<EmployeeEntity> nlist=employeeRepository.findAll();
         List<Employee> employees=new ArrayList<>();
         for(EmployeeEntity employeeEntity:nlist){
             Employee emp=new Employee();
             emp.setName(employeeEntity.getName());
+            emp.setId(employeeEntity.getId());
+            emp.setNumber(employeeEntity.getNumber());
             emp.setEmail(employeeEntity.getEmail());
             employees.add(emp);
         }
@@ -41,17 +53,25 @@ public class EmpServiceImp implements EmpService{
 
     @Override
     public boolean deleteEmployee(Long id) {
-        for (Employee employee : emp) {
-            
-            if (employee.getId() ==id) {
-
-                emp.remove(employee);
-                return true; 
-            }
-        }
-        return false; 
+       
+       EmployeeEntity empDel= employeeRepository.findById(id).get();
+        employeeRepository.delete(empDel);
+        return true; 
     }
 
+    @Override
+    public String updateEmployee(Long id, Employee employee) {
+       EmployeeEntity empExisting= employeeRepository.findById(id).get();
+       empExisting.setEmail(employee.getEmail());
+       empExisting.setNumber(employee.getNumber());
+       empExisting.setName(employee.getName());
+
+        employeeRepository.save(empExisting);
+
+        return "Updated Successfully!";
+    }
+
+ 
        
     
      
